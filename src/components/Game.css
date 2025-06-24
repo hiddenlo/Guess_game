@@ -1,0 +1,119 @@
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.grid-input {
+    padding: 8px;
+    font-size: 16px;
+    width: 60px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.game-grid {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transform-style: preserve-3d;
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-front {
+    background-color: #2196f3;
+}
+
+.card-back {
+    background-color: #fff;
+    transform: rotateY(180deg);
+    border: 2px solid #2196f3;
+}
+
+.card.solved .card-front,
+.card.solved .card-back {
+    background-color: #4caf50;
+    border-color: #4caf50;
+    color: white;
+}
+
+.win-message {
+    font-size: 24px;
+    color: #4caf50;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.reset-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.reset-button:hover {
+    background-color: #1976d2;
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        padding: 10px;
+    }
+    
+    .card-front,
+    .card-back {
+        font-size: 18px;
+    }
+}
