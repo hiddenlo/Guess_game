@@ -3,7 +3,7 @@ import './Game.css'
 
 export default function Game() {
 
-   const [gridSize,setGridSize] = useState([])
+   const [gridSize,setGridSize] = useState(4)
    const [cards,setCards] = useState([])
 
    const [isFlipped,setIsFlipped] = useState([])
@@ -12,16 +12,18 @@ export default function Game() {
    const [won,setWon] = useState(false)
 
    const handleGridSizeChange = (e) => {
-    const size = parseInt(e.target.value)
-    if(size >= 2 && size <= 10){
-        setGridSize(size)
+    let size = parseInt(e.target.value)
+    if (e.target.value === '') {
+        setGridSize('')
+        return
     }
+    if (size < 2) size = 2
+    if (size > 10) size = 10
+    setGridSize(size)
    }
-
 
    const initializeGrid = () => 
     {
-
     const totalCards = gridSize*gridSize;
     const pairs = Math.floor(totalCards/2);
 
@@ -35,11 +37,63 @@ export default function Game() {
     setIsFlipped([]);
     setSolved([]);
     setWon(false);
+   }    
+
+   const checkMatch = (secondId)=>
+   {
+      const firstId = isFlipped[0];
+      if(cards[firstId].number === cards[secondId].number)
+      {
+        setSolved([...solved,firstId,secondId]);
+        setIsFlipped([]);
+        setDisabled(false)
+      }
+      else
+      {
+        setTimeout(()=>{
+            setIsFlipped([]);
+            setDisabled(false);
+        },1000);
+      }
    }
-   
+
+    const handleClick = (id) => {
+        if(disabled || solved.includes(id) || won) return;
+
+        if(isFlipped.length === 0)
+        {
+            setIsFlipped([id])
+            return;
+        }
+
+        if(isFlipped.length===1)
+        {
+            setDisabled(true);
+            if(id!==isFlipped[0])
+            {
+                setIsFlipped([...isFlipped,id]);
+                checkMatch(id);
+            }
+            else
+            {
+                setIsFlipped([]);
+                setDisabled(false);
+            }
+        }
+   }    
+
    useEffect(()=>{
-    initializeGrid()
+    if (gridSize) {
+        initializeGrid()
+    }
    },[gridSize])
+
+   useEffect(()=>{
+    if(solved.length === cards.length && cards.length > 0)
+    {
+        setWon(true);
+    }
+   },[solved, cards])
 
   return (
     <div className="game-container">
@@ -55,16 +109,16 @@ export default function Game() {
               onChange={handleGridSizeChange}
             />
           </div>
-          
-          <div className="game-grid" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
+
+          <div className="game-grid" style={{ gridTemplateColumns: `repeat(${gridSize || 2}, 1fr)` }}>
             {cards.map((card) => (
                 <div 
                     key={card.id} 
+                    onClick={() => handleClick(card.id)}
                     className={`card ${isFlipped.includes(card.id) ? 'flipped' : ''} ${solved.includes(card.id) ? 'solved' : ''}`}
                 >
                     <div className="card-inner">
-                        <div className="card-front"></div>
-                        <div className="card-back">{card.number}</div>
+                        {isFlipped.includes(card.id) || solved.includes(card.id) ? card.number : '?'}
                     </div>
                 </div>
             ))}
@@ -73,7 +127,7 @@ export default function Game() {
           {won && <div className="win-message">Congratulations! You've won!</div>}
           
           <button className="reset-button" onClick={initializeGrid}>
-            {won ? 'Play Again' : 'Reset Game'}
+            {won ? "Play Again" : "Reset Game"}
           </button>
     </div>
   )
